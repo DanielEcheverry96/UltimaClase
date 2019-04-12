@@ -1,0 +1,15 @@
+<form>
+	<h2>
+	  {{ marca }}
+	</h2>
+	<h3> Componente hijo / Presentacion</h3>
+	<div class="card">
+	  <div class="section">
+	    {{ placa }}
+	  </div>
+	</div>
+	
+	<h2>Llamado servicios</h2>
+	<input value="Consultar personas" type="submit" (click)="consultarPersonas()" />
+	<pre>{{ listaPersonasDTO | json }}</pre>
+</form>
