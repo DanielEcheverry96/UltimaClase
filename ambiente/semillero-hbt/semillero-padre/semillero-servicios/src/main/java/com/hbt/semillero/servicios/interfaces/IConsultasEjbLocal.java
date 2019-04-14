@@ -8,6 +8,7 @@ import com.hbt.semillero.dto.LineaDTO;
 import com.hbt.semillero.dto.MarcaDTO;
 import com.hbt.semillero.dto.PersonaDTO;
 import com.hbt.semillero.dto.ResultadoDTO;
+import com.hbt.semillero.dto.VehiculoDTO;
 
 /**
  * Expone los métodos del EJB ConsultasEJB
@@ -24,6 +25,13 @@ public interface IConsultasEjbLocal {
 	 * @return
 	 */
 	public List<MarcaDTO> consultarMarcasExistentes();
+	
+	/**
+	 * Consulta las lineas existentes en el sistema.
+	 * 
+	 * @return
+	 */
+	public List<LineaDTO> consultarLineasExistentes();
 
 	/**
 	 * Consulta una lista de todas líneas asociadas a una marca registrada en el
@@ -47,5 +55,28 @@ public interface IConsultasEjbLocal {
 	 * @return
 	 */
 	public ResultadoDTO crearPersona(PersonaDTO personaDTO);
+	
+	/**
+	 * Consulta los vehiculos existentes en el sistema.
+	 * 
+	 * @return
+	 */
+	public List<VehiculoDTO> consultarVehiculosExistentes();
+	
+	/**
+	 * Consulta los vehiculos que cumplan con los criterios ingresados.
+	 * 
+	 * @param idLinea
+	 * @return
+	 */
+	public List<VehiculoDTO> consultarVehiculosPorLinea(Long idLinea);
+	
+	/**
+	 * Consulta los vehiculos que cumplan con los criterios ingresados.
+	 * 
+	 * @param idMarca
+	 * @return
+	 */
+	public List<VehiculoDTO> consultarVehiculosPorMarca(Long idMarca);
 
 }

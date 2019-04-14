@@ -1,0 +1,17 @@
+<form>
+  <div class="form-group">
+    <select class="form-control" id="marcas" [value]="marca" required>
+      <option *ngFor="let ma of listaMarcasDTO" [value]="ma.idMarca">{{ma}}</option>
+    </select>
+
+    <select class="form-control" id="lineas" [value]="linea" required>
+      <option *ngFor="let ln of listaLineasDTO" [value]="ln.idLinea">{{ln}}</option>
+    </select>
+
+    <div>
+      <input class="btn btn-default" value="Consultar" type="submit" (click)="consultarVehiculos();" />
+    </div>
+  </div>
+
+  <pre>{{ listaMarcasDTO | json }}</pre>
+</form>

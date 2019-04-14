@@ -18,10 +18,12 @@ import com.hbt.semillero.dto.LineaDTO;
 import com.hbt.semillero.dto.MarcaDTO;
 import com.hbt.semillero.dto.PersonaDTO;
 import com.hbt.semillero.dto.ResultadoDTO;
+import com.hbt.semillero.dto.VehiculoDTO;
 import com.hbt.semillero.entidades.Comprador;
 import com.hbt.semillero.entidades.Linea;
 import com.hbt.semillero.entidades.Marca;
 import com.hbt.semillero.entidades.Persona;
+import com.hbt.semillero.entidades.Vehiculo;
 import com.hbt.semillero.entidades.Vendedor;
 import com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal;
 
@@ -48,6 +50,21 @@ public class ConsultasEJB implements IConsultasEjbLocal {
 		}
 		return marcasRetorno;
 	}
+	
+	/**
+	 * {@link com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal#consultarLineasExistentes()}
+	 */
+	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<LineaDTO> consultarLineasExistentes() {
+		List<Linea> lineas = em.createQuery("Select ln from Linea ln JOIN FETCH ln.marca").getResultList();
+		List<LineaDTO> lineasRetorno = new ArrayList<>();
+		for (Linea linea : lineas) {
+			LineaDTO lineaDto = construirLineaDTO(linea);
+			lineasRetorno.add(lineaDto);
+		}
+		return lineasRetorno;
+	}
 
 	/**
 	 * {@link com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal#consultarLineasPorMarca(Long)}
@@ -55,17 +72,12 @@ public class ConsultasEJB implements IConsultasEjbLocal {
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<LineaDTO> consultarLineasPorMarca(Long idMarca) {
-		List<Linea> lineas = em
-				.createQuery("Select ln from Linea ln JOIN FETCH ln.marca where ln.marca.idMarca=:idMarca ")
+		List<Linea> lineas = em.createQuery("Select ln from Linea ln JOIN FETCH ln.marca where ln.marca.idMarca=:idMarca ")
 				.setParameter("idMarca", idMarca).getResultList();
 		List<LineaDTO> lineasRetorno = new ArrayList<>();
 		for (Linea linea : lineas) {
-			LineaDTO lineaDTO = new LineaDTO();
-			lineaDTO.setIdLinea(linea.getIdLinea());
-			lineaDTO.setNombre(linea.getNombre());
-			lineaDTO.setCilindraje(linea.getCilindraje());
-			lineaDTO.setMarca(construirMarcaDTO(linea.getMarca()));
-			lineasRetorno.add(lineaDTO);
+			LineaDTO lineaDto = construirLineaDTO(linea);
+			lineasRetorno.add(lineaDto);
 		}
 		return lineasRetorno;
 	}
@@ -79,17 +91,17 @@ public class ConsultasEJB implements IConsultasEjbLocal {
 		StringBuilder consulta = new StringBuilder("Select per FROM Persona per WHERE 1=1 ");
 		Map<String, Object> parametros = new HashMap<>();
 		if (tipoID != null) {
-			consulta.append(" and per.numeroIdentificacion =:tipoID");
+			consulta.append(" and per.tipoIdentificacion =:tipoID");
 			parametros.put("tipoID", tipoID);
 		}
 		if (numID != null) {
-			consulta.append("and per.numeroIdentificacion =:numID");
+			consulta.append(" and per.numeroIdentificacion =:numID");
 			parametros.put("numID", numID);
 		}
 		Query query = em.createQuery(consulta.toString());
 
 		for (Entry<String, Object> entry : parametros.entrySet()) {
-			query.setParameter(entry.getKey(), entry.getValue()).getResultList();
+			query.setParameter(entry.getKey(), entry.getValue());
 		}
 
 		List<Persona> personas = query.getResultList();
@@ -135,6 +147,58 @@ public class ConsultasEJB implements IConsultasEjbLocal {
 
 		return new ResultadoDTO(true, "Creado de forma exitosa");
 	}
+	
+	/**
+	 * {@link com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal#consultarVehiculosPorLinea(Long idLinea)}
+	 */
+	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<VehiculoDTO> consultarVehiculosExistentes() {
+		List<Vehiculo> vehiculos = em.createQuery("Select veh from Vehiculo veh JOIN FETCH veh.linea ln JOIN FETCH ln.marca").getResultList();
+
+		List<VehiculoDTO> vehiculosRetorno = new ArrayList<>();
+		for (Vehiculo vehiculo : vehiculos) {
+			VehiculoDTO vehiculoDto = construirVehiculoDTO(vehiculo);
+			vehiculosRetorno.add(vehiculoDto);
+		}
+		return vehiculosRetorno;
+	}
+	
+	/**
+	 * {@link com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal#consultarVehiculosPorLinea(Long idLinea)}
+	 */
+	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<VehiculoDTO> consultarVehiculosPorLinea(Long idLinea) {
+		List<Vehiculo> vehiculos = em.createQuery("Select veh from Vehiculo veh JOIN FETCH veh.linea ln JOIN FETCH ln.marca ma where ln.idLinea=:idLinea")
+				.setParameter("idLinea", idLinea).getResultList();
+
+		List<VehiculoDTO> vehiculosRetorno = new ArrayList<>();
+		for (Vehiculo vehiculo : vehiculos) {
+			VehiculoDTO vehiculoDto = construirVehiculoDTO(vehiculo);
+			vehiculosRetorno.add(vehiculoDto);
+		}
+		return vehiculosRetorno;
+	}
+	
+	/**
+	 * {@link com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal#consultarVehiculosPorMarca(Long idMarca)}
+	 */
+	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+	public List<VehiculoDTO> consultarVehiculosPorMarca(Long idMarca) {
+		// Select veh from Vehiculo veh JOIN FETCH veh.linea where veh.linea.idLinea=:idLinea
+		List<Vehiculo> vehiculos = em.createQuery("Select veh from Vehiculo veh JOIN FETCH veh.linea ln JOIN FETCH ln.marca ma where ma.idMarca=:idMarca")
+				.setParameter("idMarca", idMarca).getResultList();
+
+		List<VehiculoDTO> vehiculosRetorno = new ArrayList<>();
+		for (Vehiculo vehiculo : vehiculos) {
+			VehiculoDTO vehiculoDto = construirVehiculoDTO(vehiculo);
+			vehiculosRetorno.add(vehiculoDto);
+		}
+		return vehiculosRetorno;
+	}
+
 
 	/**
 	 * Asigna los atributos básicos de la persona
@@ -164,6 +228,31 @@ public class ConsultasEJB implements IConsultasEjbLocal {
 		marcaDto.setIdMarca(marca.getIdMarca());
 		marcaDto.setNombre(marca.getNombre());
 		return marcaDto;
+	}
+	
+	/**
+	 * Construye un DTO de LineaDTO
+	 * 
+	 * @param marca
+	 * @return
+	 */
+	private LineaDTO construirLineaDTO(Linea linea) {
+		LineaDTO lineaDto = new LineaDTO();
+		lineaDto.setIdLinea(linea.getIdLinea());
+		lineaDto.setNombre(linea.getNombre());
+		lineaDto.setCilindraje(linea.getCilindraje());
+		lineaDto.setMarca(construirMarcaDTO(linea.getMarca()));
+		
+		return lineaDto;
+	}
+	
+	private VehiculoDTO construirVehiculoDTO(Vehiculo vehiculo) {
+		VehiculoDTO vehiculoDto = new VehiculoDTO();
+		vehiculoDto.setIdVehiculo(vehiculo.getIdVehiculo());
+		vehiculoDto.setModelo(vehiculo.getModelo());
+		vehiculoDto.setPlaca(vehiculo.getPlaca());
+		vehiculoDto.setLinea(construirLineaDTO(vehiculo.getLinea()));
+		return vehiculoDto;
 	}
 
 }

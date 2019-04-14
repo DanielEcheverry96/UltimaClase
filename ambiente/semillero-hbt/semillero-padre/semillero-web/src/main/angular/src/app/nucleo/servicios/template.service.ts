@@ -12,13 +12,13 @@ export class AbstractService extends ServiciosObject {
 
     private http: HttpClient;
     private headers = { 'Content-Type': 'application/json; charset=UTF-8' };
-	
+
     constructor(injector: Injector) {
         super(injector);
         injector.get(Http);
         this.http = injector.get(HttpClient);
         if (this.isNpmServe()) {
-            
+
         }
     }
 
@@ -56,8 +56,8 @@ export class AbstractService extends ServiciosObject {
         let url = this.buildURL(module, path);
         return this.http.post<T>(url, body, { headers: this.headers });
     }
-	
-	
+
+
     public put<T>(module: string, path: string, body: any, options?: RequestOptionsArgs): Observable<T> {
         let url = this.buildURL(module, path);
         return this.http.put<T>(url, body, { headers: this.headers });

@@ -1,0 +1,21 @@
+<h3>Vehiculos</h3>
+
+<table *ngIf="listaVehiculoDTO.length>0">
+	<tr>
+		<th>Marca</th>
+		<th>Linea</th>
+		<th>Placa</th>
+		<th>Modelo</th>
+		<th>Acciones</th>
+	</tr>
+	<tr *ngFor="let vehiculo of listaVehiculoDTO">
+		<td>{{vehiculo.marca.nombre}}</td>
+		<td>{{vehiculo.linea.nombre}}</td>
+		<td>{{vehiculo.placa}}</td>
+		<td>{{vehiculo.modelo}}</td>
+		<td>
+				<button type="btn btn-default" (click)="editar(vehiculo)">Editar</button>
+				<button type="btn btn-default" (click)="eliminar(vehiculo.idVehiculo)">Eliminar</button>
+		</td>
+	</tr>
+</table>

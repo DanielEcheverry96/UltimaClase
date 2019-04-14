@@ -14,6 +14,7 @@ import com.hbt.semillero.dto.LineaDTO;
 import com.hbt.semillero.dto.MarcaDTO;
 import com.hbt.semillero.dto.PersonaDTO;
 import com.hbt.semillero.dto.ResultadoDTO;
+import com.hbt.semillero.dto.VehiculoDTO;
 import com.hbt.semillero.servicios.interfaces.IConsultasEjbLocal;
 
 /**
@@ -38,6 +39,18 @@ public class ConsultasRest {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<MarcaDTO> consultarMarcas() {
 		return consultaEJB.consultarMarcasExistentes();
+	}
+	
+	/**
+	 * Consulta las lineas existentes en el sistema.
+	 * 
+	 * @return
+	 */
+	@GET
+	@Path("/consultarLineas")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<LineaDTO> consultarLineas() {
+		return consultaEJB.consultarLineasExistentes();
 	}
 
 	/**
@@ -77,5 +90,44 @@ public class ConsultasRest {
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResultadoDTO crearPersona(PersonaDTO persona) {
 		return consultaEJB.crearPersona(persona);
+	}
+	
+	/**
+	 * Consulta los vehiculos que cumplan con los criterios ingresados
+	 * 
+	 * @param idLinea
+	 * @return
+	 */
+	@GET
+	@Path("/consultarVehiculos")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<VehiculoDTO> consultarVehiculos() {
+		return consultaEJB.consultarVehiculosExistentes();
+	}
+	
+	/**
+	 * Consulta los vehiculos que cumplan con los criterios ingresados
+	 * 
+	 * @param idLinea
+	 * @return
+	 */
+	@GET
+	@Path("/consultarVehiculosPorLinea")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<VehiculoDTO> consultarVehiculosPorLinea(@QueryParam("idLinea") Long idLinea) {
+		return consultaEJB.consultarVehiculosPorLinea(idLinea);
+	}
+	
+	/**
+	 * Consulta los vehiculos que cumplan con los criterios ingresados
+	 * 
+	 * @param idMarca
+	 * @return
+	 */
+	@GET
+	@Path("/consultarVehiculosPorMarca")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<VehiculoDTO> consultarVehiculosPorMarca(@QueryParam("idMarca") Long idMarca) {
+		return consultaEJB.consultarVehiculosPorMarca(idMarca);
 	}
 }

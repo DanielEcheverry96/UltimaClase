@@ -24,6 +24,14 @@ public class Vehiculo {
 	@Column(name = "ID_VEHICULO")
 	private Long idVehiculo;
 
+	public Long getIdVehiculo() {
+		return idVehiculo;
+	}
+
+	public void setIdVehiculo(Long idVehiculo) {
+		this.idVehiculo = idVehiculo;
+	}
+
 	@Column(name = "MODELO")
 	private int modelo;
 
